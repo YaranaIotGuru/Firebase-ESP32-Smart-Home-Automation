@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Home Control - Yarana IoT Guru</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+ <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-home"></i> Smart Home Control</h1>
+      <p class="subtitle">By Yarana IoT Guru - Mr. Abhishek Maurya</p>
+      <div class="contact-bar">
+        <a href="https://www.youtube.com/@YaranaIotGuru?sub_confirmation=1" target="_blank" class="contact-item">
+          <i class="fab fa-youtube"></i> YouTube
+        </a>
+        <a href="https://www.instagram.com/mr_abhishekdeveloper/" target="_blank" class="contact-item">
+          <i class="fab fa-instagram"></i> Instagram
+        </a>
+        <a href="tel:+917052722734" class="contact-item">
+          <i class="fas fa-phone"></i> Call
+        </a>
+        <a href="https://wa.me/917052722734" target="_blank" class="contact-item">
+          <i class="fab fa-whatsapp"></i> WhatsApp
+        </a>
+      </div>
+    </div>
+
+    <div class="credentials-section">
+      <button class="btn credentials-btn" onclick="showCredentialsModal()">
+        <i class="fas fa-cog"></i> Settings
+      </button>
+    </div>
+
+    <div class="card instructions" id="instructionsSection">
+      <h2><i class="fas fa-info-circle"></i> Firebase Setup Instructions</h2>
+      <p>Follow these steps to set up your Firebase Realtime Database:</p>
+      <ol>
+        <li>Go to <a href="https://console.firebase.google.com" target="_blank">Firebase Console</a></li>
+        <li>Create a new project or select existing one</li>
+        <li>Enable Realtime Database (Start in test mode)</li>
+        <li>Copy your Web API Key from Project Settings</li>
+        <li>Copy your Database URL from Realtime Database section</li>
+        <li>Enter credentials below to connect</li>
+      </ol>
+      <p><strong>Database Rules for Testing:</strong></p>
+      <code>{ "rules": { ".read": true, ".write": true } }</code>
+    </div>
+
+    <div class="card" id="configSection">
+      <h2><i class="fas fa-database"></i> Firebase Configuration</h2>
+      <form id="configForm">
+        <div class="form-group">
+          <label for="apiKey"><i class="fas fa-key"></i> Firebase API Key:</label>
+          <input type="password" id="apiKey" placeholder="Enter your Firebase API Key" required>
+        </div>
+        <div class="form-group">
+          <label for="databaseURL"><i class="fas fa-link"></i> Database URL:</label>
+          <input type="url" id="databaseURL" placeholder="https://your-project-id.firebaseio.com" required>
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-plug"></i> Connect to Firebase
+        </button>
+      </form>
+    </div>
+
+    <div class="card" id="relaysSection" style="display: none;">
+      <h2><i class="fas fa-toggle-on"></i> Relay Controls</h2>
+      <div class="grid" id="relaysContainer"></div>
+    </div>
+
+    <div class="card" id="timersSection" style="display: none;">
+      <h2><i class="fas fa-clock"></i> Timer Management</h2>
+      <div class="timezone-info">
+        <i class="fas fa-map-marker-alt"></i> All times are in Indian Standard Time (IST)
+        <br>Current Time: <span id="currentTime"></span>
+      </div>
+      <button class="btn btn-success" onclick="openTimerModal()">
+        <i class="fas fa-plus"></i> Add Timer
+      </button>
+      <div class="next-timer" id="nextTimer"></div>
+      <div class="grid" id="timersContainer"></div>
+    </div>
+  </div>
+
+  <!-- Timer Modal -->
+  <div id="timerModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle"><i class="fas fa-clock"></i> Add New Timer</h3>
+        <button class="close" onclick="closeTimerModal()">×</button>
+      </div>
+      <form id="timerForm">
+        <div class="form-group">
+          <label for="timerRelay"><i class="fas fa-toggle-on"></i> Select Relay:</label>
+          <select id="timerRelay" required>
+            <option value="">Choose a relay...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="timerAction"><i class="fas fa-power-off"></i> Action:</label>
+          <select id="timerAction" required>
+            <option value="">Select action...</option>
+            <option value="ON">Turn ON</option>
+            <option value="OFF">Turn OFF</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="timerStartTime"><i class="fas fa-play"></i> Start Time:</label>
+          <input type="time" id="timerStartTime" required>
+        </div>
+        <div class="form-group">
+          <label for="timerEndTime"><i class="fas fa-stop"></i> End Time (Optional):</label>
+          <input type="time" id="timerEndTime">
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-calendar-alt"></i> Active Days:</label>
+          <div class="days-grid">
+            <div class="day-checkbox" onclick="toggleDay(0)">
+              <input type="checkbox" id="day0">
+              <label for="day0">Mon</label>
+            </div>
+            <div class="day-checkbox" onclick="toggleDay(1)">
+              <input type="checkbox" id="day1">
+              <label for="day1">Tue</label>
+            </div>
+            <div class="day-checkbox" onclick="toggleDay(2)">
+              <input type="checkbox" id="day2">
+              <label for="day2">Wed</label>
+            </div>
+            <div class="day-checkbox" onclick="toggleDay(3)">
+              <input type="checkbox" id="day3">
+              <label for="day3">Thu</label>
+            </div>
+            <div class="day-checkbox" onclick="toggleDay(4)">
+              <input type="checkbox" id="day4">
+              <label for="day4">Fri</label>
+            </div>
+            <div class="day-checkbox" onclick="toggleDay(5)">
+              <input type="checkbox" id="day5">
+              <label for="day5">Sat</label>
+            </div>
+            <div class="day-checkbox" onclick="toggleDay(6)">
+              <input type="checkbox" id="day6">
+              <label for="day6">Sun</label>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i> Save Timer
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Credentials Modal -->
+  <div id="credentialsModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-cog"></i> Change Firebase Credentials</h3>
+        <button class="close" onclick="closeCredentialsModal()">×</button>
+      </div>
+      <form id="credentialsForm">
+        <div class="form-group">
+          <label for="newApiKey"><i class="fas fa-key"></i> New Firebase API Key:</label>
+          <input type="password" id="newApiKey" placeholder="Enter new API Key" required>
+        </div>
+        <div class="form-group">
+          <label for="newDatabaseURL"><i class="fas fa-link"></i> New Database URL:</label>
+          <input type="url" id="newDatabaseURL" placeholder="https://your-project-id.firebaseio.com" required>
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-sync"></i> Update Credentials
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.40/moment-timezone-with-data.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
